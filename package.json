@@ -1,6 +1,6 @@
 {
   "name": "inline-module",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Load inline es modules on modern browser.",
   "main": "inline-module.mjs",
   "scripts": {
