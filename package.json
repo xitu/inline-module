@@ -1,0 +1,19 @@
+{
+  "name": "inline-module",
+  "version": "0.0.1",
+  "description": "Load inline es modules on modern browser.",
+  "main": "inline-module.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xitu/inline-module"
+  },
+  "author": "akira-cn",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-75team": "^1.0.3"
+  }
+}
