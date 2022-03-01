@@ -3,7 +3,7 @@ export default async function inlineImport(moduleID) {
   let blobURL = null;
   if(moduleID in cache) blobURL = cache[moduleID];
   else {
-    const module = document.querySelector(`script#${moduleID}[type="inline-module"]`);
+    const module = document.querySelector(`script[type="inline-module"]${moduleID}`);
     if(module) {
       const jsCode = module.innerHTML;
       const blob = new Blob([jsCode], {type: 'text/javascript'});
