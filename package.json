@@ -13,7 +13,7 @@
   "author": "akira-cn",
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^5.16.0",
-    "eslint-config-75team": "^1.0.3"
+    "eslint": "^8.10.0",
+    "eslint-config-75team": "^1.0.1"
   }
 }
