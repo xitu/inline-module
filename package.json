@@ -4,7 +4,7 @@
   "description": "Load inline es modules on modern browser.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -13,7 +13,11 @@
   "author": "akira-cn",
   "license": "MIT",
   "devDependencies": {
+    "@types/jest": "^27.4.1",
+    "@types/puppeteer": "^5.4.5",
     "eslint": "^8.10.0",
-    "eslint-config-75team": "^1.0.1"
+    "eslint-config-75team": "^1.0.1",
+    "jest": "^27.5.1",
+    "jest-puppeteer": "^6.1.0"
   }
 }

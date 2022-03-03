@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>inline-module</title>
+    <script type="inline-module-importmap">
+        {
+          "imports": {
+            "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+          }
+        }
+      </script>
+    <script type="inline-module" id="foo">
+      const foo = 'bar';
+      export default foo;
+    </script>
+    <script src="../../index.js" setup></script>
+    <script type="module">
+        import foo from '#foo'
+        import { createApp } from 'vue';
+        console.log(createApp);
+        console.log(foo);
+        window.fooValue = foo
+    </script>
+</head>
+
+<body>
+
+</body>
+
+</html>
