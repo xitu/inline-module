@@ -9,18 +9,18 @@ const currentScript = document.currentScript || document.querySelector('script')
 
 // https://github.com/WICG/import-maps
 const map = {imports: {}, scopes: {}};
-let prefix = currentScript.getAttribute('prefix') || '#';
-if(currentScript.hasAttribute('noprefix')) {
-  prefix = '';
-}
 
 function setup() {
   const modules = document.querySelectorAll('script[type="inline-module"]');
   const importMap = {};
   [...modules].forEach((module) => {
     const {id} = module;
+    const name = module.getAttribute('name');
     if(id) {
-      importMap[`${prefix}${id}`] = getBlobURL(module);
+      importMap[`#${id}`] = getBlobURL(module);
+    }
+    if(name) {
+      importMap[name] = getBlobURL(module);
     }
   });
   const importMapEl = document.querySelector('script[type="importmap"]');
@@ -51,19 +51,15 @@ if(currentScript.hasAttribute('setup')) {
 window.inlineImport = async (moduleID) => {
   const {imports} = map;
   let blobURL = null;
-  if(!prefix) {
-    moduleID = `#${moduleID}`;
-  } else {
-    const regexp = new RegExp(`^[${prefix}]`);
-    if(regexp.test(moduleID)) {
-      moduleID = moduleID.replace(regexp, '#');
-    } else {
-      return null;
-    }
-  }
   if(moduleID in imports) blobURL = imports[moduleID];
   else {
-    const module = document.querySelector(`script[type="inline-module"]${moduleID}`);
+    let module;
+    if(/^#/.test(moduleID)) {
+      module = document.querySelector(`script[type="inline-module"]${moduleID}`);
+    }
+    if(!module) {
+      module = document.querySelector(`script[type="inline-module"][name="${moduleID}"]`);
+    }
     if(module) {
       blobURL = getBlobURL(module);
       imports[moduleID] = blobURL;
