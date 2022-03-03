@@ -32,7 +32,7 @@ A simple way of loading inline es-modules on modern browser.
 </script>
 ```
 
-**Note：inline-module scripte muse be setup before all module scripts and after all inline-module scripts in this mode**
+**Note：inline-module script must be setup before all module scripts and after all inline-module scripts in this mode.**
 
 3. Use setup and external importmap.
 
@@ -48,7 +48,7 @@ A simple way of loading inline es-modules on modern browser.
 const foo = 'bar';
 export default foo;
 </script>
-<script src="./index.js" setup></script>
+<script src="https://unpkg.com/inline-module/index.js" setup></script>
 <script type="module">
   import foo from '#foo'
   console.log(foo);
