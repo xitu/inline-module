@@ -56,7 +56,7 @@ window.inlineImport = async (moduleID) => {
   } else {
     const regexp = new RegExp(`^[${prefix}]`);
     if(regexp.test(moduleID)) {
-      moduleID = moduleID.replace(new RegExp(`^[${prefix}]`), '#');
+      moduleID = moduleID.replace(regexp, '#');
     } else {
       return null;
     }
