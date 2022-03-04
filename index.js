@@ -7,11 +7,11 @@ const map = {imports: {}, scopes: {}};
 const installed = new Set();
 
 function loadContent(url) {
-  var request = new XMLHttpRequest();
-  request.open('GET', url, false);  // `false` makes the request synchronous
+  const request = new XMLHttpRequest();
+  request.open('GET', url, false); // `false` makes the request synchronous
   request.send(null);
-  
-  if (request.status === 200) {
+
+  if(request.status === 200) {
     return request.responseText;
   }
   throw new Error(request.statusText);
@@ -29,7 +29,7 @@ function getBlobURL(module) {
     loaders = loaders.split(/\s*>\s*/);
     jsCode = loaders.reduce((code, loader) => {
       const {transform, imports} = loaderMap[loader];
-      const {code:resolved, map: sourceMap} = transform(code, {/*sourceMap: true,*/ filename: module.getAttribute('name') || module.id || 'anonymous'});
+      const {code: resolved, map: sourceMap} = transform(code, {/* sourceMap: true, */ filename: module.getAttribute('name') || module.id || 'anonymous'});
       if(sourceMap) code = `${resolved}\n\n//# sourceMappingURL=${createBlob(JSON.stringify(sourceMap))}`;
       else code = resolved;
       Object.assign(map.imports, imports);
@@ -80,13 +80,14 @@ function setup() {
   mapEl.textContent = JSON.stringify(map);
   currentScript.after(mapEl);
 
-  for(const ref of Object.values(importMap)) {
-    if(!installed.has(ref)) { // mount
+  // eslint-disable-next-line
+  for(const url of Object.values(importMap)) {
+    if(!installed.has(url)) { // mount
       const el = document.createElement('script');
       el.setAttribute('type', 'module');
-      el.setAttribute('src', ref);
+      el.setAttribute('src', url);
       currentScript.after(el);
-      installed.add(ref);
+      installed.add(url);
     }
   }
 }
