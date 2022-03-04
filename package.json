@@ -1,9 +1,12 @@
 {
   "name": "inline-module",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Load inline es modules on modern browser.",
   "main": "index.js",
   "scripts": {
+    "build": "npm run build:loaders & npm run build:core",
+    "build:loaders": "esbuild loaders/index.js --bundle --outfile=dist/loaders.js --minify",
+    "build:core": "esbuild index.js --bundle --outfile=dist/core.js --minify",
     "test": "jest"
   },
   "repository": {
@@ -13,8 +16,10 @@
   "author": "akira-cn",
   "license": "MIT",
   "devDependencies": {
+    "@babel/standalone": "^7.17.6",
     "@types/jest": "^27.4.1",
     "@types/puppeteer": "^5.4.5",
+    "esbuild": "^0.14.24",
     "eslint": "^8.10.0",
     "eslint-config-75team": "^1.0.1",
     "jest": "^27.5.1",
