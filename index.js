@@ -29,8 +29,8 @@ function getBlobURL(module) {
     loaders = loaders.split(/\s*>\s*/);
     jsCode = loaders.reduce((code, loader) => {
       const {transform, imports} = loaderMap[loader];
-      const {code: resolved, map: sourceMap} = transform(code, {/* sourceMap: true, */ filename: module.getAttribute('name') || module.id || 'anonymous'});
-      if(sourceMap) code = `${resolved}\n\n//# sourceMappingURL=${createBlob(JSON.stringify(sourceMap))}`;
+      const {code: resolved, map: sourceMap} = transform(code, {sourceMap: true, filename: module.getAttribute('name') || module.id || 'anonymous'});
+      if(sourceMap) code = `${resolved}\n\n//# sourceMappingURL=data:application/json;base64,${btoa(JSON.stringify(sourceMap))}`;
       else code = resolved;
       Object.assign(map.imports, imports);
       return code;

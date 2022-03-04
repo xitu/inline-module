@@ -3,9 +3,16 @@ import { requireBabel } from "./utils";
 export default {
   transform(code, options = {}) {
     const {availablePresets, transform} = requireBabel();
-    options.filename = `${options.filename}.jsx`;
+    const {filename} = options;
+    if(!/\.[tj]sx$/.test(filename)) {
+      options.filename = `${filename}.jsx`;
+    }
+    const presets = [availablePresets.react];
+    if(/\.tsx$/.test(filename)) {
+      presets.push(availablePresets.typescript);
+    }
     return transform(code, {
-      presets: [availablePresets.react],
+      presets: [availablePresets.react, availablePresets.typescript],
       ...options
     }); 
   },
