@@ -1,10 +1,20 @@
-const loaderMap = window['inline-module-loaders'];
+const buildInLoaders = {
+  babel: 'https://unpkg.com/@babel/standalone/babel.min.js',
+  // Maybe can split loaders into single loader. Perhaps turn into plugin in the future.
+  react: 'https://unpkg.com/inline-module/dist/loaders.js',
+  typescript: 'https://unpkg.com/inline-module/dist/loaders.js'
+}
 
+const headDom = document.getElementsByTagName('head')[0];
 const currentScript = document.currentScript || document.querySelector('script');
 
 // https://github.com/WICG/import-maps
 const map = {imports: {}, scopes: {}};
 const installed = new Set();
+
+function getLoaderMap(){
+  return window['inline-module-loaders'] || {};
+}
 
 function loadContent(url) {
   const request = new XMLHttpRequest();
@@ -17,6 +27,24 @@ function loadContent(url) {
   throw new Error(request.statusText);
 }
 
+function getLoaders(module){
+  let loaders = module.getAttribute('loader');
+  return loaders ? loaders.split(/\s*>\s*/) : null
+}
+
+function importBuildInLoaders(loaders = []){
+  if(!loaders.length) return;
+  const loaderSet = new Set();
+  loaderSet.add(buildInLoaders['babel']);
+  loaders.forEach(loader => loader in buildInLoaders ? loaderSet.add(buildInLoaders[loader]) : null);
+  loaderSet.forEach(loaderSrc => {
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.innerHTML = loadContent(loaderSrc);
+    headDom.appendChild(script);
+  });
+}
+
 function getBlobURL(module) {
   let jsCode = module.innerHTML;
   if(module.hasAttribute('src')) {
@@ -24,9 +52,9 @@ function getBlobURL(module) {
     jsCode = loadContent(url);
     module.innerHTML = jsCode;
   }
-  let loaders = module.getAttribute('loader');
+  let loaders = getLoaders(module);
   if(loaders) {
-    loaders = loaders.split(/\s*>\s*/);
+    const loaderMap = getLoaderMap();
     jsCode = loaders.reduce((code, loader) => {
       const {transform, imports} = loaderMap[loader];
       const {code: resolved, map: sourceMap} = transform(code, {sourceMap: true, filename: module.getAttribute('name') || module.id || 'anonymous'});
@@ -48,6 +76,15 @@ function createBlob(code, type = 'text/plain') {
 function setup() {
   const modules = document.querySelectorAll('script[type="inline-module"]');
   const importMap = {};
+
+  // check inline-module should preload buildin loaders.
+  let preloads = [];
+  [...modules].forEach((module) => {
+    let loaders = getLoaders(module);
+    preloads = loaders ? [...preloads, ...loaders] : preloads;
+  });
+  importBuildInLoaders(preloads);
+
   [...modules].forEach((module) => {
     const {id} = module;
     const name = module.getAttribute('name');
