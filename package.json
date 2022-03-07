@@ -1,12 +1,13 @@
 {
   "name": "inline-module",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Load inline es modules on modern browser.",
   "main": "index.js",
   "scripts": {
     "build": "npm run build:loaders & npm run build:core",
     "build:loaders": "esbuild loaders/index.js --bundle --outfile=dist/loaders.js --minify",
     "build:core": "esbuild index.js --bundle --outfile=dist/core.js --minify",
+    "prepublishOnly": "npm run build",
     "test": "jest"
   },
   "repository": {
