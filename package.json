@@ -7,7 +7,7 @@
     "build": "npm run build:loaders & npm run build:core",
     "build:loaders": "esbuild loaders/index.js --bundle --outfile=dist/loaders.js --minify",
     "build:core": "esbuild index.js --bundle --outfile=dist/core.js --minify",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run build && npm run test",
     "test": "jest"
   },
   "repository": {

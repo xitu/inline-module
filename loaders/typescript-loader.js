@@ -5,7 +5,7 @@ export default {
     const {availablePresets, transform} = requireBabel();
     const {filename} = options;
     if(!/\.ts$/.test(filename)) {
-      options.filename = `${options.filename}.ts`;
+      options.filename = `${filename}.ts`;
     }
     return transform(code, {
       presets: [availablePresets.typescript],
