@@ -4,7 +4,7 @@ A simple way of loading inline es-modules on modern browser.
 
 ## Usage
 
-1. Use `inlineImport` to dynamic import inline scripts.
+1. Use `inlineImport` to dynamically import inline scripts.
 
 ```html
 <script type="inline-module" id="foo">
