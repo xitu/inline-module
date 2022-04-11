@@ -1,6 +1,6 @@
 {
   "name": "inline-module",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "Load inline es modules on modern browser.",
   "main": "index.js",
   "scripts": {
@@ -22,8 +22,9 @@
     "@types/puppeteer": "^5.4.5",
     "esbuild": "^0.14.24",
     "eslint": "^8.10.0",
-    "eslint-config-next": "^12.1.0",
+    "eslint-config-sprite": "^1.0.6",
     "jest": "^27.5.1",
-    "jest-puppeteer": "^6.1.0"
+    "jest-puppeteer": "^6.1.0",
+    "puppeteer": "^13.5.2"
   }
 }

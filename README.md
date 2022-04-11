@@ -11,21 +11,21 @@ A simple way of loading inline es-modules on modern browser.
   const foo = 'bar';
   export default {foo};
 </script>
-<script src="https://unpkg.com/inline-module/index.js"></script>
+<script src="https://unpkg.com/inline-module/index.js" setup="false"></script>
 <script type="module">
   const foo = (await inlineImport('#foo')).default;
   console.log(foo); // {foo: 'bar'}
 </script>
   ```
 
-2. Use setup attribute to insert importmap. Then you can use inline module as normal es-modules.
+2. Auto setup to insert importmap. Then you can use inline module as normal es-modules.
 
 ```html
 <script type="inline-module" id="foo">
   const foo = 'bar';
   export default {foo};
 </script>
-<script src="https://unpkg.com/inline-module/index.js" setup></script>
+<script src="https://unpkg.com/inline-module/index.js"></script>
 <script type="module">
   import foo from '#foo';
   console.log(foo); // {foo: 'bar'}
@@ -48,7 +48,7 @@ A simple way of loading inline es-modules on modern browser.
 const foo = 'bar';
 export default foo;
 </script>
-<script src="https://unpkg.com/inline-module/index.js" setup></script>
+<script src="https://unpkg.com/inline-module/index.js"></script>
 <script type="module">
   import foo from '#foo'
   console.log(foo);
@@ -94,7 +94,7 @@ export default foo;
 </script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <script src="https://unpkg.com/inline-module/dist/loaders.js"></script>
-<script src="https://unpkg.com/inline-module/dist/core.js" setup></script>
+<script src="https://unpkg.com/inline-module/dist/core.js"></script>
 <div id="app"></div>
 <script type="module">
   import Hello from 'hello';

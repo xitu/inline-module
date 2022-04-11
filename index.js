@@ -92,7 +92,7 @@ function setup() {
   }
 }
 
-if(currentScript.hasAttribute('setup')) {
+if(currentScript.getAttribute('setup') !== 'false') {
   setup();
 }
 
