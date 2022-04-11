@@ -6,6 +6,10 @@ const currentScript = document.currentScript || document.querySelector('script')
 const map = {imports: {}, scopes: {}};
 const installed = new Set();
 
+function toBase64(str) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+
 function loadContent(url) {
   const request = new XMLHttpRequest();
   request.open('GET', url, false); // `false` makes the request synchronous
@@ -17,12 +21,27 @@ function loadContent(url) {
   throw new Error(request.statusText);
 }
 
-function getBlobURL(module) {
-  let jsCode = module.innerHTML;
+// replace code
+function replaceImport(code, map) {
+  const importExp = /^(\s*import\s+[\s\S]*?from\s*['"`])([\s\S]*?)(['"`])/img;
+  return code.replace(importExp, (a, b, c, d) => {
+    const url = map[c];
+    if(url) {
+      return `${b}${url}${d}`;
+    }
+    return `${b}${c}${d}`;
+  });
+}
+
+function getBlobURL(module, replaceImportURL = false, map = {}) {
+  let jsCode = module.textContent;
   if(module.hasAttribute('src')) {
     const url = module.getAttribute('src');
     jsCode = loadContent(url);
-    module.innerHTML = jsCode;
+    module.textContent = jsCode;
+  }
+  if(replaceImportURL) {
+    jsCode = replaceImport(jsCode, map);
   }
   let loaders = module.getAttribute('loader');
   if(loaders) {
@@ -30,7 +49,7 @@ function getBlobURL(module) {
     jsCode = loaders.reduce((code, loader) => {
       const {transform, imports} = loaderMap[loader];
       const {code: resolved, map: sourceMap} = transform(code, {sourceMap: true, filename: module.getAttribute('name') || module.id || 'anonymous'});
-      if(sourceMap) code = `${resolved}\n\n//# sourceMappingURL=data:application/json;base64,${btoa(JSON.stringify(sourceMap))}`;
+      if(sourceMap) code = `${resolved}\n\n//# sourceMappingURL=data:application/json;base64,${toBase64(JSON.stringify(sourceMap))}`;
       else code = resolved;
       Object.assign(map.imports, imports);
       return code;
@@ -48,23 +67,27 @@ function createBlob(code, type = 'text/plain') {
 function setup() {
   const modules = document.querySelectorAll('script[type="inline-module"]');
   const importMap = {};
+  const loadModules = [];
+
+  const importMapEl = document.querySelector('script[type="importmap"]');
+  if(importMapEl) {
+    console.warn('Cannot update importmap after  <script type="importmap"> is set. Please use <script type="inline-module-importmap"> instead.');
+  }
+
   [...modules].forEach((module) => {
     const {id} = module;
     const name = module.getAttribute('name');
-    let file;
-    if(id || name) file = getBlobURL(module);
+    const url = getBlobURL(module, !!importMapEl, importMap);
     if(id) {
-      importMap[`#${id}`] = file;
+      importMap[`#${id}`] = url;
+      importMap[`inline://#${id}`] = url; // for some platform only support protocals
     }
     if(name) {
-      importMap[name] = file;
+      importMap[name] = url;
+      importMap[`inline://${name}`] = url; // for some platform only support protocals
     }
+    loadModules.push(url);
   });
-  const importMapEl = document.querySelector('script[type="importmap"]');
-  if(importMapEl) {
-    // map = JSON.parse(mapEl.innerHTML);
-    throw new Error('Cannot setup after importmap is set. Use <script type="inline-module-importmap"> instead.');
-  }
 
   const externalMapEl = document.querySelector('script[type="inline-module-importmap"]');
   if(externalMapEl) {
@@ -75,21 +98,23 @@ function setup() {
 
   Object.assign(map.imports, importMap);
 
-  const mapEl = document.createElement('script');
-  mapEl.setAttribute('type', 'importmap');
-  mapEl.textContent = JSON.stringify(map);
-  currentScript.after(mapEl);
+  if(!importMapEl) {
+    const mapEl = document.createElement('script');
+    mapEl.setAttribute('type', 'importmap');
+    mapEl.textContent = JSON.stringify(map);
+    currentScript.after(mapEl);
+  }
 
-  // eslint-disable-next-line
-  for(const url of Object.values(importMap)) {
+  loadModules.forEach((url) => {
     if(!installed.has(url)) { // mount
       const el = document.createElement('script');
+      el.async = false;
       el.setAttribute('type', 'module');
       el.setAttribute('src', url);
       currentScript.after(el);
       installed.add(url);
     }
-  }
+  });
 }
 
 if(currentScript.getAttribute('setup') !== 'false') {
