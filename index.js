@@ -80,11 +80,11 @@ function setup() {
     const url = getBlobURL(module, !!importMapEl, importMap);
     if(id) {
       importMap[`#${id}`] = url;
-      importMap[`inline://#${id}`] = url; // for some platform only support protocals
+      importMap[`//#${id}`] = url; // for some platform only support protocals
     }
     if(name) {
       importMap[name] = url;
-      importMap[`inline://${name}`] = url; // for some platform only support protocals
+      importMap[`//${name}`] = url; // for some platform only support protocals
     }
     loadModules.push(url);
   });
